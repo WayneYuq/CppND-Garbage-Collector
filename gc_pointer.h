@@ -5,6 +5,34 @@
 #include "gc_details.h"
 #include "gc_iterator.h"
 /*
+    The class Pointer is the fundamental class for the implementation of a garbage collector.
+    The Pointer class upholds a list that affiliates a reference count with every memory block
+    that is allocated to be used by a Pointer. Let us elaborate how this is done. Every time a
+    Pointer points to a memory block, the reference count for that memory block is increased
+    by 1. If the Pointer is then reassigned to point to another memory block, the reference
+    count for the current block will be decremented, while the reference count for the new block
+    is incremented. We can conclude that when a pointer is added to a memory block its reference
+    count is increased, and likewise, when a pointer is removed, it is decreased. When the
+    reference count becomes zero, that is when the memory can be deallocated.
+
+    Pointer is considered a template class and three operators are overloaded. The '*', '–>'
+    and [] operators. Due to the way this class is implemented, Pointer can be used like a regular pointer.
+
+    Pointer does not implement the overloading arithmetic operators such as '++' or '--'.
+    Later we will explain why they are not overloaded. Due to this restriction the only way a pointer
+    can point to a specific memory block is by assigning the pointer to the block. These restrictions
+    are solved through the implementation and usage of the Iterator class. The garbage collector
+    works in situations where a Pointer goes out of scope. The garbage collector list is then
+    traversed through, and any element that has a reference count equal to zero is deallocated.
+    Garbage collecting can be activated explicitly as well whenever there is a need for it.
+
+    Pointer implements a pointer type that uses
+    garbage collection to release unused memory.
+    A Pointer must only be used to point to memory
+    that was dynamically allocated using new.
+    When used to refer to an allocated array,
+    specify the array size.
+
     Pointer implements a pointer type that uses
     garbage collection to release unused memory.
     A Pointer must only be used to point to memory
@@ -22,9 +50,9 @@ private:
     T *addr;
     /*  isArray is true if this Pointer points
         to an allocated array. It is false
-        otherwise. 
+        otherwise.
     */
-    bool isArray; 
+    bool isArray;
     // true if pointing to array
     // If this Pointer is pointing to an allocated
     // array, then arraySize contains its size.
@@ -113,29 +141,47 @@ Pointer<T,size>::Pointer(T *t){
 // Copy constructor.
 template< class T, int size>
 Pointer<T,size>::Pointer(const Pointer &ob){
-
-    // TODO: Implement Pointer constructor
-    // Lab: Smart Pointer Project Lab
-
+    typename std::list<PtrDetails<T>>::iterator p;
+    p = findPtrInfo(ob.addr);
+    p->refcount++;
+    if (p->isArray) {
+      isArray = true;
+    }
+    addr = ob.addr;
 }
 
 // Destructor for Pointer.
 template <class T, int size>
 Pointer<T, size>::~Pointer(){
-    
-    // TODO: Implement Pointer destructor
-    // Lab: New and Delete Project Lab
+  typename std::list<PtrDetail<T>>::iterator p;
+  p = findPtrInfo(addr);
+  p->refcount--;
+  
 }
 
 // Collect garbage. Returns true if at least
 // one object was freed.
 template <class T, int size>
 bool Pointer<T, size>::collect(){
+  bool memfreed = false;
+  typename std::list<PtrDetail<T>>::iterator p;
+  do {
+    for (p = refContainer.start(); p != refContainer.end(); p++) {
+      if (p->refcount != 0)
+	continue;
 
-    // TODO: Implement collect function
-    // LAB: New and Delete Project Lab
-    // Note: collect() will be called in the destructor
-    return false;
+      memfreed = true;
+      refContainer.remove(p);
+      if (p->isArray)
+	delete[] p->memPtr;
+      else
+	delete p->memPtr;
+
+      break;
+    }
+  } while (p != refContainer.end());
+
+  return memfreed;
 }
 
 // Overload assignment of pointer to Pointer.
@@ -149,10 +195,11 @@ T *Pointer<T, size>::operator=(T *t){
 // Overload assignment of Pointer to Pointer.
 template <class T, int size>
 Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
+  typename std::list<PtrDetails<T>>::iterator p;
+  p = findPtrInfo(addr);
+  p->refcount--;
 
-    // TODO: Implement operator==
-    // LAB: Smart Pointer Project Lab
-
+  return new Pointer<T, size>(rv);
 }
 
 // A utility function that displays refContainer.

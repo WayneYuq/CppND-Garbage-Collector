@@ -1,3 +1,12 @@
+/*
+        Memory to which Pointer is pointing to is accessed with the * and -> operators.
+    The Iterator class allows us use pointer arithmetic. Iterator overloads all
+    pointer operators necessary for pointer arithmetic. The purpose of Iterator
+    is to traverse through the list elements of dynamically allocated arrays.
+    Another purpose is for bound checking. An Iterator from Pointer is acquired
+    by calling functions begin() and end().
+*/
+
 // Exception thrown when an attempt is made to
 // use an Iter that exceeds the range of the
 // underlying object.
