@@ -60,6 +60,7 @@ private:
     static bool first; // true when first Pointer is created
     // Return an iterator to pointer details in refContainer.
     typename std::list<PtrDetails<T> >::iterator findPtrInfo(T *ptr);
+    static int out_scope_num; // the number of Pointers go out of scope
 public:
     // Define an iterator type for Pointer<T>.
     typedef Iter<T> GCiterator;
@@ -155,8 +156,12 @@ template <class T, int size>
 Pointer<T, size>::~Pointer(){
   typename std::list<PtrDetail<T>>::iterator p;
   p = findPtrInfo(addr);
-  p->refcount--;
-  
+  out_scope_num++;
+  if (out_scope_num >= 10) {
+    collect(); 
+    p->refcount -= 10;
+    out_scope_num = 0;
+  }
 }
 
 // Collect garbage. Returns true if at least
@@ -177,6 +182,7 @@ bool Pointer<T, size>::collect(){
       else
 	delete p->memPtr;
 
+      delete p;
       break;
     }
   } while (p != refContainer.end());
