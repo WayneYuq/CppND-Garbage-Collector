@@ -41,6 +41,8 @@
         "typeinfo": "cpp",
         "utility": "cpp",
         "cmath": "cpp",
-        "ctime": "cpp"
+        "ctime": "cpp",
+        "deque": "cpp",
+        "string": "cpp"
     }
 }

@@ -111,9 +111,9 @@ Pointer<T, size>::Pointer(T *t) : arraySize(size)
     if (first)
         atexit(shutdown);
     first = false;
-    
-    PtrDetails<T> *ptr = new PtrDetails<T>(t, size);
-    ptr->refcount++;
+
+    PtrDetails<T> ptr(t, size);
+    ptr.refcount++;
     addr = t;
 
     refContainer.push_back(ptr);
@@ -128,11 +128,9 @@ Pointer<T, size>::Pointer(const Pointer &ob)
     typename std::list<PtrDetails<T>>::iterator p;
     p = findPtrInfo(ob.addr);
     p->refcount++;
-    if (p->isArray)
-    {
-        isArray = true;
-    }
+    isArray = p->isArray;
     addr = ob.addr;
+    arraySize = ob.arraySize;
 }
 
 // Destructor for Pointer.
@@ -159,19 +157,22 @@ bool Pointer<T, size>::collect()
     typename std::list<PtrDetails<T>>::iterator p;
     do
     {
-        for (p = refContainer.start(); p != refContainer.end(); p++)
+        for (p = refContainer.begin(); p != refContainer.end(); p++)
         {
             if (p->refcount != 0)
                 continue;
 
             memfreed = true;
-            refContainer.remove(p);
-            if (p->isArray)
+            refContainer.erase(p);
+            if (p->isArray) {
+                std::cout << p->isArray << "delete by []" << "\n";
                 delete[] p->memPtr;
-            else
+            }
+            else {
+                std::cout << "delete not by []" << "\n";
                 delete p->memPtr;
+            }
 
-            delete p;
             break;
         }
     } while (p != refContainer.end());
@@ -186,8 +187,12 @@ T *Pointer<T, size>::operator=(T *t)
     typename std::list<PtrDetails<T>>::iterator p;
     p = findPtrInfo(addr);
     p->refcount--;
+    PtrDetails<T> ptr(t, size);
+    ptr.refcount++;
+    addr = t;
+    refContainer.push_back(ptr);
 
-    return new Pointer(t);
+    return t;
 }
 // Overload assignment of Pointer to Pointer.
 template <class T, int size>
