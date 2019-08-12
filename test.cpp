@@ -1,25 +1,26 @@
 #include <iostream>
+#include <string>
 
+template<int size = 0>
 class test
 {
 private:
-    /* data */
+    int arraysize;
 public:
-    test(/* args */);
-    ~test();
+    test() : arraysize(size) { std::cout << arraysize << "\n"; };
+    ~test() {};
 };
 
-test::test(/* args */)
-{
-}
+// template<int size>
+// test<size>::test()
+// {
+//     std::cout << 132 << "\n";
+// }
 
-test::~test()
-{
-}
+
 
 int main(int argc, char const *argv[])
 {
-    std::cout << new test() << "\n";
-    
+    test<> p; 
     return 0;
 }

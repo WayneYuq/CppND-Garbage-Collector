@@ -1,27 +1,6 @@
-/*
-  So, as we said Pointer upholds a list that contains reference counts. Every
-  element inside this list is encapsulated in a PtrDetails type object. PtrDetails
-  holds the reference count of the element in a refcount variable. PtrDetails has
-  other variables as well. memPtr is a pointer to the memory block. isArray is 
-  a bool variable that tells us if there is an allocated array. It is false if
-  it isn't. If it is, then it is set to true and the variable arr_size then
-  holds the length of the allocated array.
+#ifndef GC_DETAIL_H
+#define GC_DETAIL_H
 
-  Declare generic class PtrDetails
-  Create generics via templates
-  all attributes and methods are going to be public, because they are going to be used by other classes
-  create attribute for refcount
-  create attribute memPtr as generic pointer for storage of basic info about memory
-  create bool attribute isArray for recognition of memory type allocated
-  create attribute arraySize for working with array allocation
-  Declare constructor for PtrDetails which will have two parameters
-  First constructor paremeter is going to be pointer and second which
-    is not required, is going to be size of eventual array in memory
-  We need to construct logic of the constructor which will set
-    isArray attribute if size is larger then 0
-  Create overload operator == which will be used
-  for comparison between to PtrDetails object in lists. It is mandatory
-*/
 // This class defines an element that is stored
 // in the garbage collection information list.
 //
@@ -42,9 +21,8 @@ array, then arraySize contains its size */
     // If this is an array, then size specifies
     // the size of the array.
 
-    PtrDetails(T *ptr, int size = 0)
+    PtrDetails(T *ptr, int size) : memPtr(ptr), arraySize(size)
     {
-      memPtr = ptr;
       if (size > 0) {
 	      isArray = true;
       }
@@ -58,3 +36,5 @@ bool operator==(const PtrDetails<T> &ob1,
 {
   return (ob1.memPtr == ob2.memPtr);
 }
+
+#endif // GC_DETAIL_H

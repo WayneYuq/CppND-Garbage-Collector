@@ -1,5 +1,7 @@
 #include <memory>
+#include <list>
 #include "gc_pointer.h"
+#include "gc_details.h"
 #include "LeakTester.h"
 
 namespace custom {
@@ -7,10 +9,10 @@ namespace custom {
     class list {
         private:
             struct node{
-            T value;
-            Pointer< node > prev;
-            Pointer< node > next;
-            node(T val, node* _prev, node* _next) : value(val), prev(_prev), next(_next) {}
+                T value;
+                Pointer< node > prev;
+                Pointer< node > next;
+                node(T val, node* _prev, node* _next) : value(val), prev(_prev), next(_next) {}
             };
             node* head;
             node* tail;
@@ -46,16 +48,16 @@ namespace custom {
 }
 
 int main() {
-custom::list< int > list;
+    custom::list< int > list;
 
-std::cout << "Add 5 numbers: " << std::endl;
-for(int i = 0; i < 5; i++) {
-    int temp;
-    std::cout<<"Add "<< i+1<< ". element:"<< std::endl;
-    std::cin >>temp;
-    list.push_back(temp);
-}
+    std::cout << "Add 5 numbers: " << std::endl;
+    for(int i = 0; i < 5; i++) {
+        int temp;
+        std::cout<<"Add "<< i+1<< ". element:"<< std::endl;
+        std::cin >>temp;
+        list.push_back(temp);
+    }
 
-list.print();
-return 0;
+    list.print();
+    return 0;
 }
