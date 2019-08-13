@@ -168,7 +168,6 @@ bool Pointer<T, size>::collect()
                 delete[] p->memPtr;
             }
             else {
-                std::cout << "delete not by []" << "\n";
                 delete p->memPtr;
             }
 
