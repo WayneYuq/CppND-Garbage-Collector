@@ -165,7 +165,6 @@ bool Pointer<T, size>::collect()
             memfreed = true;
             refContainer.erase(p);
             if (p->isArray) {
-                std::cout << p->isArray << "delete by []" << "\n";
                 delete[] p->memPtr;
             }
             else {

@@ -7,22 +7,22 @@
 namespace custom {
     template< typename T>
     class list {
-        private:
-            struct node{
-                T value;
-                Pointer< node > prev;
-                Pointer< node > next;
-                node(T val, node* _prev, node* _next) : value(val), prev(_prev), next(_next) {}
-            };
-            node* head;
-            node* tail;
-        public:
+    private:
+        struct node{
+            T value;
+            Pointer< node > prev;
+            Pointer< node > next;
+            node(T val, node* _prev, node* _next) : value(val), prev(_prev), next(_next) {}
+        };
+        node* head;
+        node* tail;
+    public:
 
         // We don't have any destructors or freeing of memory
-            list(): head(NULL), tail(NULL){}
-            void push_back(T);
-            bool empty() const { return ( !head || !tail ); }
-            void print();
+        list(): head(NULL), tail(NULL){}
+        void push_back(T);
+        bool empty() const { return ( !head || !tail ); }
+        void print();
     };
 
     template <typename T>
